@@ -1,5 +1,7 @@
 const puppeteer = require("puppeteer");
 
+const salve = require("./salveToDB.js");
+
 let scrape = async () => {
   const browser = await puppeteer.launch({
     headless: true,
@@ -22,5 +24,5 @@ let scrape = async () => {
 };
 
 scrape().then(value => {
-  console.log(value.length);
+  salve(value);
 });
