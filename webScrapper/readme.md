@@ -5,4 +5,4 @@
 
 ### Todo
 
--[] fazer pecorrer as paginas de um site
+- [ ] fazer pecorrer as paginas de um site
