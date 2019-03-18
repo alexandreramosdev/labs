@@ -11,6 +11,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "mongoose": "^5.4.19",
     "puppeteer": "^1.13.0"
   },
   "devDependencies": {}
