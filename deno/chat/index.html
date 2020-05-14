@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" />
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+      #app {
+        height: 100vh;
+      }
+    </style>
+    <title>Chat using Deno</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" >
+      import { 
+        html, render, useEffect, useState  
+      } from 'https://unpkg.com/htm/preact/standalone.module.js'
+
+      let ws
+
+      function Chat() {
+        // Messages
+        const [messages, setMessages] = useState([])
+        const onReceiveMessage = ({ data }) => setMessages(m => ([...m, data]))
+        const onSendMessage = e => {
+          const msg = e.target[0].value
+
+          e.preventDefault()
+          ws.send(msg)
+          e.target[0].value = ''
+        }
+
+        //WebSocket connection + events
+        useEffect(() => {
+          if (ws) ws.close()
+          ws = new WebSocket(`ws://${window.location.host}/ws`)
+          ws.addEventListener('message', onReceiveMessage)
+          
+          return () => {
+            ws.removeEventListener('message', onReceiveMessage)
+          }
+        },[])
+        
+        console.log(messages)
+        return html`
+        <div class="container h-screen max-h-screen flex flex-col justify-end">
+          ${messages.map(message => html`
+            <div>${message}</div>
+          `)}
+
+          <form onSubmit=${onSendMessage} class="w-full max-w-lg mx-auto" >
+            <div class="flex items-center  py-2">
+              <input 
+                class="shadow appearance-none border rounded rounded-r-none w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
+                type="text" 
+                placeholder="Digite ..."  
+              />
+              <button 
+                class="flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded rounded-l-none"
+              >Send</button>
+            </div>  
+          </form>
+        </div>
+        `
+      }
+
+      render(html`<${Chat} />`, document.getElementById('app'))
+    </script>
+  </body>
+</html>
